@@ -15,8 +15,13 @@ public class PlayerMovement : MonoBehaviour
     public float groundDistance = 0.4f;
     public LayerMask grounndMask;
 
+    public  Transform world;
     Vector3 velocity;
     bool isGrounded;
+
+    public float rotateSpeed = 0.5f;
+    float currentRotation = 0;
+    Quaternion wantedRotation = Quaternion.Euler(0,0,0);
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, grounndMask);
+        
 
         if(isGrounded && velocity.y < 0)
         {
@@ -45,7 +51,14 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+        
+        if(Input.GetButtonDown("Submit"))
+        {
+             currentRotation+=90;
+             wantedRotation = Quaternion.Euler(0,0,currentRotation); 
+        }
 
+        world.rotation = Quaternion.RotateTowards(world.rotation, wantedRotation, Time.deltaTime * rotateSpeed);
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
